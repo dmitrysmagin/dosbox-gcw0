@@ -1,0 +1,12 @@
+.git
+*.o
+*.exe
+*.bat
+*.dge
+*.zip
+*.sh
+*~.c
+*~.cpp
+*~.h
+*~.txt
+dosbox
