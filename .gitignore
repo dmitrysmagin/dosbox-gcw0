@@ -12,6 +12,7 @@ missing
 *.o
 *.a
 *.exe
+*.dll
 *.bat
 *.dge
 *.zip
@@ -26,3 +27,6 @@ dosbox
 *.status
 *.diff
 stamp-h1
+src/disk_c
+dosbox.conf
+mapper.txt
