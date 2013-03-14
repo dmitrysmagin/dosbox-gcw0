@@ -1428,7 +1428,7 @@ static void GUI_StartUp(Section * sec) {
 	}
 	} else { // sdl.desktop.want_type != SCREEN_SURFACE_DINGUX
 		// test which modes are available and fill sdl.desktop data
-		sdl.desktop.bpp = SDL_VideoModeOK(320,240,16,SDL_FULLSCREEN|SDL_HWSURFACE); // let SDL choose bpp
+		sdl.desktop.bpp = SDL_VideoModeOK(320,240,16,SDL_HWSURFACE); // let SDL choose bpp
 		if(!sdl.desktop.full.fixed) { // i.e. fullresolution=original
 			sdl.desktop.fullscreen = true;
 			sdl.desktop.full.fixed = true;
