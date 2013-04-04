@@ -197,6 +197,7 @@ struct SDL_Block {
 #endif
 	struct {
 		SDL_Surface * surface;
+		SDL_Surface * buffer;
 #if (HAVE_DDRAW_H) && defined(WIN32)
 		RECT rect;
 #endif
@@ -489,6 +490,10 @@ Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,G
 		SDL_FreeSurface(sdl.blit.surface);
 		sdl.blit.surface=0;
 	}
+	if (sdl.blit.buffer) {
+		SDL_FreeSurface(sdl.blit.buffer);
+		sdl.blit.buffer=0;
+	}
 	switch (sdl.desktop.want_type) {
 	case SCREEN_SURFACE:
 dosurface:
@@ -577,6 +582,13 @@ dosurface:
 									sdl.desktop.full.height,
 									sdl.desktop.bpp,
 									(flags & GFX_CAN_RANDOM) ? SDL_SWSURFACE : SDL_HWSURFACE);
+
+		sdl.blit.buffer=SDL_CreateRGBSurface(SDL_SWSURFACE, // for mixing menu and game screen
+									sdl.desktop.full.width,
+									sdl.desktop.full.height,
+									sdl.desktop.bpp,
+									0,0,0,0);
+
 		GFX_PDownscale = NULL;
 		if(width <= sdl.desktop.full.width && height <= sdl.desktop.full.height) {
 			sdl.clip.w=width;
@@ -981,16 +993,26 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 		}
 		break;
 	case SCREEN_SURFACE_DINGUX:
-		if (sdl.blit.surface) {
-			if(GFX_PDownscale) {
-				GFX_PDOWNSCALE(sdl.blit.surface, sdl.surface);
+		if(!vkeyb_active) {
+			if (sdl.blit.surface) {
+				if(GFX_PDownscale) {
+					GFX_PDOWNSCALE(sdl.blit.surface, sdl.surface);
+				} else {
+					SDL_BlitSurface(sdl.blit.surface, 0, sdl.surface, &sdl.clip);
+				} 
 			} else {
-				SDL_BlitSurface( sdl.blit.surface, 0, sdl.surface, &sdl.clip );
-			} 
+				if(SDL_MUSTLOCK(sdl.surface)) SDL_UnlockSurface(sdl.surface);
+			}
 		} else {
-			if(SDL_MUSTLOCK(sdl.surface)) SDL_UnlockSurface(sdl.surface);
+			// assume that sdl.blit.surface is set
+			if(GFX_PDownscale) {
+				GFX_PDOWNSCALE(sdl.blit.surface, sdl.blit.buffer);
+			} else {
+				SDL_BlitSurface(sdl.blit.surface, 0, sdl.blit.buffer,  &sdl.clip);
+			}
+			VKEYB_BlitVkeyboard(sdl.blit.buffer);
+			SDL_BlitSurface(sdl.blit.buffer, 0, sdl.surface, 0);
 		}
-		VKEYB_BlitVkeyboard(sdl.surface);
 		SDL_Flip(sdl.surface);
 		break;
 #if (HAVE_DDRAW_H) && defined(WIN32)
