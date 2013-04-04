@@ -50,6 +50,7 @@
 #include "cross.h"
 #include "control.h"
 #include "sdl_downscaler.h"
+#include "sdl_vkeyboard.h"
 
 #define MAPPERFILE "mapper-" VERSION ".map"
 //#define DISABLE_JOYSTICK
@@ -576,13 +577,13 @@ dosurface:
 									sdl.desktop.full.height,
 									sdl.desktop.bpp,
 									(flags & GFX_CAN_RANDOM) ? SDL_SWSURFACE : SDL_HWSURFACE);
-
 		GFX_PDownscale = NULL;
 		if(width <= sdl.desktop.full.width && height <= sdl.desktop.full.height) {
 			sdl.clip.w=width;
 			sdl.clip.h=height;
 			sdl.clip.x=(Sint16)((sdl.desktop.full.width-width)/2);
 			sdl.clip.y=(Sint16)((sdl.desktop.full.height-height)/2);
+			sdl.blit.surface=SDL_CreateRGBSurface(SDL_SWSURFACE,width,height,bpp,0,0,0,0);
 		} else {
 			sdl.clip.w=0; sdl.clip.h=0; sdl.clip.x=0; sdl.clip.y=0;
 			sdl.blit.surface=SDL_CreateRGBSurface(SDL_SWSURFACE,width,height,bpp,0,0,0,0);
@@ -989,6 +990,7 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 		} else {
 			if(SDL_MUSTLOCK(sdl.surface)) SDL_UnlockSurface(sdl.surface);
 		}
+		VKEYB_BlitVkeyboard(sdl.surface);
 		SDL_Flip(sdl.surface);
 		break;
 #if (HAVE_DDRAW_H) && defined(WIN32)
@@ -1053,6 +1055,13 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 	}
 }
 
+void GFX_ForceUpdate()
+{
+	if(sdl.updating == false) {
+		sdl.updating=true;
+		GFX_EndUpdate(NULL);
+	}
+}
 
 void GFX_SetPalette(Bitu start,Bitu count,GFX_PalEntry * entries) {
 	/* I should probably not change the GFX_PalEntry :) */
@@ -1440,6 +1449,7 @@ static void GUI_StartUp(Section * sec) {
 		sdl.mouse.autolock = true;
 		GFX_CaptureMouse();
 		#endif
+		VKEYB_Init(sdl.desktop.bpp);
 	}
 
 	/* Get some Event handlers */
@@ -1644,6 +1654,11 @@ void GFX_Events() {
 			} 
 #endif
 		default:
+			// a hack to implement virtual keyboard
+			if(sdl.desktop.type == SCREEN_SURFACE_DINGUX) {
+				if(!VKEYB_CheckEvent(&event)) break; // else event is modified
+			}
+
 			void MAPPER_CheckEvent(SDL_Event * event);
 			MAPPER_CheckEvent(&event);
 		}
