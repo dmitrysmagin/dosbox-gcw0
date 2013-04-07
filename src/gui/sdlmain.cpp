@@ -993,7 +993,7 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 		}
 		break;
 	case SCREEN_SURFACE_DINGUX:
-		if(!vkeyb_active) {
+		if(!vkeyb_active && !vkeyb_last) {
 			if (sdl.blit.surface) {
 				if(GFX_PDownscale) {
 					GFX_PDOWNSCALE(sdl.blit.surface, sdl.surface);
@@ -1012,6 +1012,7 @@ void GFX_EndUpdate( const Bit16u *changedLines ) {
 			}
 			VKEYB_BlitVkeyboard(sdl.blit.buffer);
 			SDL_BlitSurface(sdl.blit.buffer, 0, sdl.surface, 0);
+			VKEYB_CleanVkeyboard(sdl.blit.buffer);
 		}
 		SDL_Flip(sdl.surface);
 		break;

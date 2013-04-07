@@ -119,6 +119,7 @@ struct VKEYB_Block {
 static VKEYB_Block vkeyb;
 
 bool vkeyb_active = false; // vkeyb show flag
+bool vkeyb_last = false; // vkeyb delete flag
 static bool vkeyb_bg = true; // background on/off
 
 void VKEYB_Init(int bpp)
@@ -182,6 +183,7 @@ int VKEYB_CheckEvent(SDL_Event *event)
 
 	if(keystate && event->key.keysym.sym == SDLK_TAB) {
 		vkeyb_active ^= 1;
+		if(!vkeyb_active) vkeyb_last = true;
 		ret = 0;
 		update_screen = true;
 		goto _exit;
@@ -336,9 +338,14 @@ void VKEYB_BlitVkeyboard(SDL_Surface *surface)
 	SDL_BlitSurface(vkeyb.surface, 0, surface, &dest);
 }
 
+void VKEYB_CleanVkeyboard(SDL_Surface *surface)
+{
+	SDL_Rect dest;
+	dest.x = vkeyb.x;
+	dest.y = vkeyb.y;
+	dest.w = 287;
+	dest.h = 80;
 
-
-
-
-
-
+	SDL_FillRect(surface, &dest, 0);
+	vkeyb_last = false;
+}
