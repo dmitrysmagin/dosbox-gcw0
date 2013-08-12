@@ -1751,7 +1751,7 @@ void Config_Add_SDL() {
 		"ddraw",
 #endif
 		0 };
-	Pstring = sdl_sec->Add_string("output",Property::Changeable::Always,"surface");
+	Pstring = sdl_sec->Add_string("output",Property::Changeable::Always,"surface_dingux");
 	Pstring->Set_help("What video system to use for output.");
 	Pstring->Set_values(outputs);
 
@@ -1781,7 +1781,7 @@ void Config_Add_SDL() {
 	Pstring = sdl_sec->Add_path("mapperfile",Property::Changeable::Always,MAPPERFILE);
 	Pstring->Set_help("File used to load/save the key/event mappings from. Resetmapper only works with the defaul value.");
 
-	Pbool = sdl_sec->Add_bool("usescancodes",Property::Changeable::Always,true);
+	Pbool = sdl_sec->Add_bool("usescancodes",Property::Changeable::Always,false);
 	Pbool->Set_help("Avoid usage of symkeys, might not work on all operating systems.");
 }
 

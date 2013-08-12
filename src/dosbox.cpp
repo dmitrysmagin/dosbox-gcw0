@@ -383,7 +383,7 @@ void DOSBOX_Init(void) {
 	Pbool->Set_help("Do aspect correction, if your output method doesn't support scaling this can slow things down!.");
 
 	Pmulti = secprop->Add_multi("scaler",Property::Changeable::Always," ");
-	Pmulti->SetValue("normal2x");
+	Pmulti->SetValue("none");
 	Pmulti->Set_help("Scaler used to enlarge/enhance low resolution modes. If 'forced' is appended,\n"
 	                 "then the scaler will be used even if the result might not be desired.");
 	Pstring = Pmulti->GetSection()->Add_string("type",Property::Changeable::Always,"normal2x");
@@ -409,7 +409,7 @@ void DOSBOX_Init(void) {
 		"dynamic",
 #endif
 		"normal", "simple",0 };
-	Pstring = secprop->Add_string("core",Property::Changeable::WhenIdle,"auto");
+	Pstring = secprop->Add_string("core",Property::Changeable::WhenIdle,"dynamic");
 	Pstring->Set_values(cores);
 	Pstring->Set_help("CPU Core used in emulation. auto will switch to dynamic if available and\n"
 		"appropriate.");
@@ -433,8 +433,8 @@ void DOSBOX_Init(void) {
 		"                  handle.");
 
 	const char* cyclest[] = { "auto","fixed","max","%u",0 };
-	Pstring = Pmulti_remain->GetSection()->Add_string("type",Property::Changeable::Always,"auto");
-	Pmulti_remain->SetValue("auto");
+	Pstring = Pmulti_remain->GetSection()->Add_string("type",Property::Changeable::Always,"max");
+	Pmulti_remain->SetValue("max");
 	Pstring->Set_values(cyclest);
 
 	Pstring = Pmulti_remain->GetSection()->Add_string("parameters",Property::Changeable::Always,"");
@@ -464,7 +464,7 @@ void DOSBOX_Init(void) {
 	Pbool = secprop->Add_bool("nosound",Property::Changeable::OnlyAtStart,false);
 	Pbool->Set_help("Enable silent mode, sound is still emulated though.");
 
-	Pint = secprop->Add_int("rate",Property::Changeable::OnlyAtStart,44100);
+	Pint = secprop->Add_int("rate",Property::Changeable::OnlyAtStart,22050);
 	Pint->Set_values(rates);
 	Pint->Set_help("Mixer sample rate, setting any device's rate higher than this will probably lower their sound quality.");
 
@@ -539,7 +539,7 @@ void DOSBOX_Init(void) {
 	Pstring->Set_values(oplemus);
 	Pstring->Set_help("Provider for the OPL emulation. compat might provide better quality (see oplrate as well).");
 
-	Pint = secprop->Add_int("oplrate",Property::Changeable::WhenIdle,44100);
+	Pint = secprop->Add_int("oplrate",Property::Changeable::WhenIdle,22050);
 	Pint->Set_values(oplrates);
 	Pint->Set_help("Sample rate of OPL music emulation. Use 49716 for highest quality (set the mixer rate accordingly).");
 
@@ -548,7 +548,7 @@ void DOSBOX_Init(void) {
 	Pbool = secprop->Add_bool("gus",Property::Changeable::WhenIdle,false); 	
 	Pbool->Set_help("Enable the Gravis Ultrasound emulation.");
 
-	Pint = secprop->Add_int("gusrate",Property::Changeable::WhenIdle,44100);
+	Pint = secprop->Add_int("gusrate",Property::Changeable::WhenIdle,22050);
 	Pint->Set_values(rates);
 	Pint->Set_help("Sample rate of Ultrasound emulation.");
 
@@ -575,7 +575,7 @@ void DOSBOX_Init(void) {
 	Pbool = secprop->Add_bool("pcspeaker",Property::Changeable::WhenIdle,true);
 	Pbool->Set_help("Enable PC-Speaker emulation.");
 
-	Pint = secprop->Add_int("pcrate",Property::Changeable::WhenIdle,44100);
+	Pint = secprop->Add_int("pcrate",Property::Changeable::WhenIdle,22050);
 	Pint->Set_values(rates);
 	Pint->Set_help("Sample rate of the PC-Speaker sound generation.");
 
@@ -585,7 +585,7 @@ void DOSBOX_Init(void) {
 	Pstring->Set_values(tandys);
 	Pstring->Set_help("Enable Tandy Sound System emulation. For 'auto', emulation is present only if machine is set to 'tandy'.");
 	
-	Pint = secprop->Add_int("tandyrate",Property::Changeable::WhenIdle,44100);
+	Pint = secprop->Add_int("tandyrate",Property::Changeable::WhenIdle,22050);
 	Pint->Set_values(rates);
 	Pint->Set_help("Sample rate of the Tandy 3-Voice generation.");
 
