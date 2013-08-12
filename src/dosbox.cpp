@@ -599,7 +599,7 @@ void DOSBOX_Init(void) {
 	secprop->AddInitFunction(&MOUSE_Init); //Must be after int10 as it uses CurMode
 	secprop->AddInitFunction(&JOYSTICK_Init);
 	const char* joytypes[] = { "auto", "2axis", "4axis", "4axis_2", "fcs", "ch", "none",0};
-	Pstring = secprop->Add_string("joysticktype",Property::Changeable::WhenIdle,"auto");
+	Pstring = secprop->Add_string("joysticktype",Property::Changeable::WhenIdle,"none");
 	Pstring->Set_values(joytypes);
 	Pstring->Set_help(
 		"Type of joystick to emulate: auto (default), none,\n"
